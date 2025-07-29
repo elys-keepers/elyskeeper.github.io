@@ -213,7 +213,7 @@
 
   <section class="validator-info">
     <p><strong>Validator Address:</strong></p>
-    <code id="validatorAddress">elys197uts40mlzwvcsz7smhhnl2khwdgt67tm7ylk3</code>
+    <code id="validatorAddress">elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0</code>
     <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
   </section>
 
@@ -250,7 +250,7 @@
 
     // Fetch total delegation to the validator
     async function fetchTotalDelegation() {
-      const url = "https://api.elys.nodestake.org/cosmos/staking/v1beta1/validators/elys197uts40mlzwvcsz7smhhnl2khwdgt67tm7ylk3";
+      const url = "https://api.elys.nodestake.org/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -291,7 +291,7 @@
         const delegations = data.delegation_responses || [];
 
         const found = delegations.find(d => 
-          d.delegation.validator_address === "elys197uts40mlzwvcsz7smhhnl2khwdgt67tm7ylk3"
+          d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
         );
 
         if (found) {
