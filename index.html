@@ -213,7 +213,7 @@
 
   <section class="validator-info">
     <p><strong>Validator Address:</strong></p>
-    <code id="validatorAddress">elysvaloper1lwmzaxeqg5547d5r2464r04f8kptxqj6q963z2</code>
+    <code id="validatorAddress">elys197uts40mlzwvcsz7smhhnl2khwdgt67tm7ylk3</code>
     <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
   </section>
 
@@ -291,7 +291,7 @@
         const delegations = data.delegation_responses || [];
 
         const found = delegations.find(d => 
-          d.delegation.validator_address === "elysvaloper1lwmzaxeqg5547d5r2464r04f8kptxqj6q963z2"
+          d.delegation.validator_address === "elys197uts40mlzwvcsz7smhhnl2khwdgt67tm7ylk3"
         );
 
         if (found) {
@@ -299,7 +299,7 @@
           resultDiv.innerHTML = `✅ You are delegating <strong>${amount.toLocaleString()} $ELYS</strong> to Elys Keepers! Thank you for your trust.`;
         } else {
           resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br>
-          <a href="https://app.elys.network/stake" target="_blank" style="color:#6C47FF; text-decoration:underline;">Delegate now on Elys App</a>`;
+          <a href="https://app.elys.network/earn/staking" target="_blank" style="color:#6C47FF; text-decoration:underline;">Delegate now on Elys App</a>`;
         }
       } catch (error) {
         resultDiv.textContent = "Could not fetch delegation data. Please try again later.";
