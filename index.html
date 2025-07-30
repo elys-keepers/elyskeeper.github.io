@@ -100,9 +100,7 @@
         type="text" 
         id="walletAddress" 
         placeholder="Enter your elys1... wallet address" 
-        autocomplete="off" 
-        autocorrect="off" 
-        spellcheck="false"
+        autocomplete="off"
       />
       <button class="check-btn" onclick="checkDelegation()">Check</button>
     </div>
@@ -111,24 +109,19 @@
   </div>
 
   <script>
-    // --- ON LOAD: Fetch total staked amount ---
     document.addEventListener("DOMContentLoaded", () => {
       fetchTotalDelegation();
     });
 
-    // --- FUNCTION: Fetch Total Staked ---
     async function fetchTotalDelegation() {
-      const proxyUrl = "https://corsproxy.io/?";
+      const proxy = "https://corsproxy.io/?";
       const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
-
       try {
-        const response = await fetch(proxyUrl + url);
+        const response = await fetch(proxy + url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-
         const tokens = parseFloat(data.validator.tokens);
         const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
-
         document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
       } catch (error) {
         console.error("Failed to load total delegation:", error);
@@ -136,7 +129,6 @@
       }
     }
 
-    // --- FUNCTION: Check Delegation ---
     async function checkDelegation() {
       const address = document.getElementById("walletAddress").value.trim();
       const resultDiv = document.getElementById("result");
@@ -145,7 +137,6 @@
       resultDiv.classList.remove("show");
       resultDiv.innerHTML = "";
 
-      // Validate address
       if (!address) {
         resultDiv.innerHTML = "Please enter your wallet address.";
         resultDiv.style.color = "#ff6b6b";
@@ -165,12 +156,11 @@
       resultDiv.classList.add("show");
       button.disabled = true;
 
-      const proxyUrl = "https://corsproxy.io/?";
+      const proxy = "https://corsproxy.io/?";
       const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
 
       try {
-        console.log("Checking:", address);
-        const response = await fetch(proxyUrl + url);
+        const response = await fetch(proxy + url);
 
         if (response.status === 404) {
           resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to any validator.<br><br>
@@ -184,8 +174,6 @@
         }
 
         const data = await response.json();
-        console.log(data);
-
         const delegations = data.delegation_responses || [];
 
         const found = delegations.find(
