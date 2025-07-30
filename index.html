@@ -109,6 +109,7 @@
   </div>
 
   <script>
+    // --- ON LOAD: Fetch total staked amount ---
     document.addEventListener("DOMContentLoaded", () => {
       fetchTotalDelegation();
     });
@@ -120,8 +121,10 @@
         const response = await fetch(proxy + url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
+
         const tokens = parseFloat(data.validator.tokens);
         const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
         document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
       } catch (error) {
         console.error("Failed to load total delegation:", error);
