@@ -250,7 +250,8 @@
 
     // Fetch total delegation to the validator
     async function fetchTotalDelegation() {
-      const url = "https://api.elys.nodestake.org/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
+      const url = "const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
+";
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -281,7 +282,7 @@
       resultDiv.style.color = "#00d48a";
       resultDiv.classList.add("show");
 
-      const url = `https://api.elys.nodestake.org/cosmos/staking/v1beta1/delegations/${address}`;
+      const url = const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
       
       try {
         const response = await fetch(url);
