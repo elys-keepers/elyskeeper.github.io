@@ -11,7 +11,6 @@
       box-sizing: border-box;
       font-family: 'Inter', sans-serif;
     }
-
     body {
       background: #0f0f13;
       color: #ffffff;
@@ -21,7 +20,6 @@
       align-items: center;
       padding: 30px 20px;
     }
-
     .container {
       background: #1a1a24;
       border-radius: 16px;
@@ -30,26 +28,22 @@
       padding: 30px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-
     h1 {
       text-align: center;
       margin-bottom: 10px;
       font-size: 2rem;
       color: #6C47FF;
     }
-
     .subtitle {
       text-align: center;
       font-size: 1rem;
       color: #b0b0c0;
       margin-bottom: 30px;
     }
-
     .input-group {
       display: flex;
       gap: 10px;
     }
-
     input {
       flex-grow: 1;
       padding: 14px;
@@ -60,12 +54,10 @@
       font-size: 1rem;
       outline: none;
     }
-
     input:focus {
       border-color: #6C47FF;
       box-shadow: 0 0 0 2px rgba(108, 71, 255, 0.25);
     }
-
     .check-btn {
       background: #6C47FF;
       color: white;
@@ -76,11 +68,13 @@
       font-weight: 600;
       transition: all 0.2s;
     }
-
-    .check-btn:hover {
+    .check-btn:hover:not(:disabled) {
       background: #5a3bd9;
     }
-
+    .check-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
     #result {
       margin-top: 20px;
       font-size: 1rem;
@@ -89,16 +83,13 @@
       height: auto;
       transition: opacity 0.3s ease;
     }
-
     #result.show {
       opacity: 1;
     }
-
     a {
       color: #6C47FF;
       text-decoration: underline;
     }
-
     #totalDelegations {
       text-align: center;
       font-size: 1.1rem;
@@ -106,7 +97,6 @@
       color: #00d48a;
       font-weight: 600;
     }
-
     .loading {
       color: #b0b0c0;
       font-style: italic;
@@ -114,14 +104,13 @@
   </style>
 </head>
 <body>
-
   <div class="container">
     <h1>Elys Keepers</h1>
     <p class="subtitle">Verify your delegation</p>
 
     <div class="input-group">
-      <input type="text" id="walletAddress" placeholder="Enter your Elys wallet address" />
-      <button class="check-btn" onclick="checkDelegation()">Check</button>
+      <input type="text" id="walletAddress" placeholder="Enter your Elys wallet address" autocomplete="off" />
+      <button class="check-btn" id="checkButton" onclick="checkDelegation()">Check</button>
     </div>
 
     <div id="result"></div>
@@ -129,49 +118,66 @@
   </div>
 
   <script>
-    // Fetch total delegation on page load
-    window.onload = function () {
+    // DOM Ready
+    document.addEventListener("DOMContentLoaded", () => {
       fetchTotalDelegation();
-    };
+      console.log("✅ Elys Keepers App: Loaded and ready.");
+    });
 
-    // Get validator info - now using official API
+    // Fetch Total Staked Amount
     async function fetchTotalDelegation() {
       const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
 
+      try {
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
         const tokens = parseFloat(data.validator.tokens);
         const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
         document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
       } catch (error) {
-        console.error("Failed to load total delegation:", error);
+        console.error("❌ Failed to fetch total delegation:", error);
         document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
       }
     }
 
-    // Check user delegation
+    // Check User Delegation
     async function checkDelegation() {
       const address = document.getElementById("walletAddress").value.trim();
       const resultDiv = document.getElementById("result");
-      const checkBtn = document.querySelector(".check-btn");
+      const button = document.getElementById("checkButton");
 
-      // Reset result
+      // Reset result view
       resultDiv.classList.remove("show");
       resultDiv.innerHTML = "";
-      checkBtn.disabled = true;
 
-      if (!address.startsWith("elys1") || address.length < 30) {
-        resultDiv.textContent = "Please enter a valid Elys wallet address.";
-        resultDiv.style.color = "#ff6b6b";
-        resultDiv.classList.add("show");
-        checkBtn.disabled = false;
+      // Disable button
+      button.disabled = true;
+
+      // Validate wallet format
+      if (!address) {
+        showError("Please enter your wallet address.");
         return;
       }
 
-      resultDiv.textContent = "Checking...";
+      if (!address.startsWith("elys1")) {
+        showError("Wallet address must start with 'elys1'.");
+        return;
+      }
+
+      if (address.length < 39 || address.length > 48) {
+        showError("Invalid length. Elys address is 39–48 characters.");
+        return;
+      }
+
+      // Show loading
+      resultDiv.innerHTML = "🔍 Checking your delegation...";
       resultDiv.style.color = "#b0b0c0";
       resultDiv.classList.add("show");
 
@@ -180,45 +186,61 @@
       try {
         const response = await fetch(url);
 
+        // Case: No delegations (404 or empty)
+        if (response.status === 404 || response.status === 400) {
+          showNotDelegating();
+          return;
+        }
+
         if (!response.ok) {
-          if (response.status === 404) {
-            resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to any validator.<br><br><a href="https://app.elys.network/earn/staking" target="_blank">Delegate now on Elys App</a>`;
-            resultDiv.style.color = "#ff6b6b";
-            resultDiv.classList.add("show");
-            checkBtn.disabled = false;
-            return;
-          } else {
-            throw new Error("Network Error");
-          }
+          throw new Error(`Network error: ${response.status}`);
         }
 
         const data = await response.json();
         const delegations = data.delegation_responses || [];
 
-        const found = delegations.find(
-          d => d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
+        const found = delegations.find(d => 
+          d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
         );
 
         if (found) {
-          const amount = parseFloat(found.balance.amount) / 1e6;
-          resultDiv.innerHTML = `✅ You are delegating <strong>${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} $ELYS</strong> to Elys Keepers! Thank you for your trust.`;
+          const amount = parseFloat(found.balance.amount) / 1_000_000;
+          const formatted = amount.toLocaleString(undefined, { maximumFractionDigits: 2 });
+          resultDiv.innerHTML = `✅ You are delegating <strong>${formatted} $ELYS</strong> to <strong>Elys Keepers</strong>! Thank you for your trust and support. 🙌`;
           resultDiv.style.color = "#00d48a";
         } else {
-          resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br><a href="https://app.elys.network/earn/staking" target="_blank">Delegate now on Elys App</a>`;
-          resultDiv.style.color = "#ff6b6b";
+          showNotDelegating();
         }
-        resultDiv.classList.add("show");
       } catch (error) {
-        console.error("Check delegation error:", error);
-        resultDiv.textContent = "Could not fetch data. Please try again later.";
+        console.error("🚨 Delegation check failed:", error);
+        resultDiv.innerHTML = `⚠️ Could not load data. Please check your connection and try again.`;
         resultDiv.style.color = "#ff6b6b";
         resultDiv.classList.add("show");
+      } finally {
+        button.disabled = false; // Re-enable
       }
+    }
 
-      checkBtn.disabled = false;
+    // Helper: Show Error
+    function showError(msg) {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `❌ ${msg}`;
+      resultDiv.style.color = "#ff6b6b";
+      resultDiv.classList.add("show");
+      document.getElementById("checkButton").disabled = false;
+    }
+
+    // Helper: Show Not Delegating
+    function showNotDelegating() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        ❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br>
+        <a href="https://app.elys.network/earn/staking" target="_blank" style="color:#6C47FF; text-decoration:underline;">👉 Delegate now on Elys App</a>
+      `;
+      resultDiv.style.color = "#ff6b6b";
+      resultDiv.classList.add("show");
+      document.getElementById("checkButton").disabled = false;
     }
   </script>
-
 </body>
 </html>
-
