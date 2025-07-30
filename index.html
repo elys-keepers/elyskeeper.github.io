@@ -3,241 +3,271 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Elys Keepers - Delegation Checker</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
+  <title>Elys Keepers Governor</title>
+  <meta name="description" content="Elys Keepers – Trusted Validator & Governance Leader in the Elys Network. Stake with us. Govern with strength.">
+
+  <!-- Google Fonts: Inter + Space Grotesk -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN for rapid UI -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'elys-purple': '#6C47FF',
+            'elys-dark': '#0f0f13',
+            'elys-card': '#1a1a24',
+            'elys-green': '#00D48A',
+            'elys-red': '#FF6B6B'
+          },
+          fontFamily: {
+            'sans': ['Inter', 'ui-sans-serif'],
+            'heading': ['Space Grotesk', 'ui-monospace']
+          }
+        }
+      }
     }
+  </script>
+
+  <style>
     body {
       background: #0f0f13;
-      color: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px 20px;
-    }
-    .container {
-      background: #1a1a24;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 500px;
-      padding: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 10px;
-      font-size: 2rem;
-      color: #6C47FF;
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 1rem;
-      color: #b0b0c0;
-      margin-bottom: 30px;
-    }
-    .input-group {
-      display: flex;
-      gap: 10px;
-    }
-    input {
-      flex-grow: 1;
-      padding: 14px;
-      border: 1px solid #3a3a48;
-      background: #252530;
-      border-radius: 8px;
       color: white;
-      font-size: 1rem;
-      outline: none;
+      font-family: 'Inter', sans-serif;
     }
-    input:focus {
-      border-color: #6C47FF;
-      box-shadow: 0 0 0 2px rgba(108, 71, 255, 0.25);
+    .hero-gradient {
+      background: linear-gradient(145deg, rgba(108, 71, 255, 0.15), rgba(0, 212, 138, 0.1));
     }
-    .check-btn {
+    .btn-primary {
       background: #6C47FF;
-      color: white;
-      border: none;
-      padding: 0 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
       transition: all 0.2s;
     }
-    .check-btn:hover:not(:disabled) {
+    .btn-primary:hover {
       background: #5a3bd9;
+      transform: translateY(-2px);
     }
-    .check-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+    .link-glow {
+      transition: all 0.3s;
+    }
+    .link-glow:hover {
+      color: #6C47FF !important;
+      text-shadow: 0 0 8px rgba(108, 71, 255, 0.5);
     }
     #result {
-      margin-top: 20px;
-      font-size: 1rem;
-      line-height: 1.6;
-      opacity: 0;
-      height: auto;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, max-height 0.5s ease;
     }
     #result.show {
       opacity: 1;
-    }
-    a {
-      color: #6C47FF;
-      text-decoration: underline;
-    }
-    #totalDelegations {
-      text-align: center;
-      font-size: 1.1rem;
-      margin-top: 20px;
-      color: #00d48a;
-      font-weight: 600;
-    }
-    .loading {
-      color: #b0b0c0;
-      font-style: italic;
+      max-height: 200px;
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Elys Keepers</h1>
-    <p class="subtitle">Verify your delegation</p>
+<body class="min-h-screen text-white">
 
-    <div class="input-group">
-      <input type="text" id="walletAddress" placeholder="Enter your Elys wallet address" autocomplete="off" />
-      <button class="check-btn" id="checkButton" onclick="checkDelegation()">Check</button>
+  <!-- Navbar -->
+  <nav class="px-6 py-4 flex justify-between items-center border-b border-gray-800">
+    <div class="text-2xl font-bold text-elys-purple font-heading">Elys Keepers</div>
+    <div class="space-x-6 hidden md:flex">
+      <a href="#home" class="link-glow">Home</a>
+      <a href="#about" class="link-glow">About</a>
+      <a href="#delegate" class="link-glow">Delegate</a>
+      <a href="#governance" class="link-glow">Governance</a>
     </div>
+    <div class="flex space-x-3">
+      <a href="https://x.com/elys_keepers" target="_blank" class="text-gray-400 hover:text-white transition">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.25 2.25H8.08l4.713 6.231z"/></svg>
+      </a>
+      <a href="https://github.com/elys-keepers" target="_blank" class="text-gray-400 hover:text-white transition">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-1.005-.69.075-.675.075-.675 1.125.075 1.72 1.155 1.72 1.155 1.005 1.71 2.635 1.215 3.27 093.93-.975 1.08-1.68 1.08-2.91 0-1.26-.51-2.28-1.5-1.59-3.3 0-.75-.27-1.275-.525-1.65C5.1 9.375 7.02 7.5 9.825 7.5c2.82 0 5.175 2.325 5.175 5.175 0 2.88-.165 5.22-.165 5.22 0 1.05.6 2.13 1.5 2.715a10.26 10.26 0 0 1 1.575.765c-.555.165-1.14.24-1.725.24"/></svg>
+      </a>
+      <a href="https://discord.gg/elys" target="_blank" class="text-gray-400 hover:text-white transition">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.691-3.182-1.178-4.905-1.465a.074.074 0 0 0-.079.036c-.21.39-.442.883-.608 1.305-1.389-.202-2.78-.202-4.168 0-.165-.422-.398-.915-.607-1.305a.077.077 0 0 0-.08-.036c-1.723.287-3.375.774-4.906 1.465a.071.071 0 0 0-.031.027C.68 9.74.397 14.923.91 20.053a.08.08 0 0 0 .039.057c2.357 1.45 4.624 2.09 6.83 2.474a.078.078 0 0 0 .082-.042c.46-1.28.705-2.632.705-4.025a.075.075 0 0 0-.039-.068c-1.28-.62-2.42-1.503-3.365-2.59a.077.077 0 0 1-.015-.071.073.073 0 0 1 .05-.047c.134-.034.27-.06.408-.08a.075.075 0 0 0 .051-.091.11.11 0 0 1 .024-.077.073.073 0 0 1 .07-.024c3.986 1.803 8.248 1.803 12.195 0a.074.074 0 0 1 .07.024.108.108 0 0 1 .024.077.075.075 0 0 0 .051.091c.138.02.274.046.408.08a.072.072 0 0 1 .049.047.075.075 0 0 1-.015.071c-.944 1.087-2.085 1.97-3.365 2.59a.077.077 0 0 0-.039.068c0 1.393.245 2.745.705 4.025a.077.077 0 0 0 .082.042c2.206-.384 4.473-1.024 6.83-2.474a.078.078 0 0 0 .039-.057c.708-5.896-.453-10.742-1.877-15.324a.063.063 0 0 0-.03-.027zM8.02 15.33c-1.183 0-2.157-1.082-2.157-2.407 0-1.335.956-2.416 2.157-2.416 1.21 0 2.184 1.081 2.157 2.416 0 1.325-.955 2.407-2.157 2.407zm7.946 0c-1.183 0-2.157-1.082-2.157-2.407 0-1.335.956-2.416 2.157-2.416 1.21 0 2.184 1.081 2.157 2.416 0 1.325-.955 2.407-2.157 2.407z"/></svg>
+      </a>
+    </div>
+  </nav>
 
-    <div id="result"></div>
-    <div id="totalDelegations">Loading total staked...</div>
-  </div>
+  <!-- Hero Section -->
+  <section id="home" class="px-6 py-16 text-center md:px-12">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-4xl md:text-6xl font-bold font-heading mb-6 bg-clip-text text-transparent bg-gradient-to-r from-elys-purple to-elys-green">
+        Elys Keepers
+      </h1>
+      <p class="text-xl text-gray-300 mb-8">
+        <strong>“Securing the Elys Network. One Delegate at a Time.”</strong>
+      </p>
+      <p class="text-lg text-gray-400 mb-10">
+        We’re not just validators — we’re builders, governors, and long-term supporters of the Elys ecosystem. Stake with us and help shape the future of DeFi interoperability.
+      </p>
+      <a href="#delegate" class="btn-primary text-white px-8 py-3 rounded-lg font-semibold inline-block">
+        Delegate Now
+      </a>
+    </div>
+  </section>
 
+  <!-- Delegation Checker -->
+  <section id="delegate" class="px-6 py-16 bg-elys-card">
+    <div class="max-w-2xl mx-auto bg-black/40 p-8 rounded-2xl border border-gray-700">
+      <h2 class="text-2xl font-bold mb-2 text-center">Validator Delegation Checker</h2>
+      <p class="text-gray-400 text-center mb-6">Verify your delegation to <strong>Elys Keepers</strong></p>
+
+      <div class="flex flex-col sm:flex-row gap-3 mb-6">
+        <input 
+          type="text" 
+          id="walletAddress" 
+          placeholder="Enter your Elys wallet address" 
+          class="flex-grow px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-elys-purple"
+          autocomplete="off"
+        />
+        <button 
+          id="checkButton" 
+          onclick="checkDelegation()" 
+          class="btn-primary px-6 py-3 rounded-lg font-semibold whitespace-nowrap">
+          Check
+        </button>
+      </div>
+
+      <div id="result" class="text-sm leading-relaxed text-gray-300 opacity-0 max-h-0 overflow-hidden"></div>
+      <div id="totalDelegations" class="text-center text-elys-green font-semibold mt-6">Loading total staked...</div>
+    </div>
+  </section>
+
+  <!-- About / Governance -->
+  <section id="about" class="px-6 py-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold font-heading mb-6">About Elys Keepers</h2>
+      <p class="text-gray-300 mb-6">
+        Elys Keepers are a decentralized group of developers, validators, and DeFi enthusiasts committed to <strong>security, uptime, and active governance</strong> within the Elys Network.
+      </p>
+      <p class="text-gray-300 mb-6">
+        We believe in <strong>community-first validation</strong> — transparent operations, regular updates, and participation in key network upgrades.
+      </p>
+
+      <h3 class="text-xl font-semibold mb-3">Our Values</h3>
+      <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6">
+        <li><strong>Reliability:</strong> 100% uptime, trusted infrastructure</li>
+        <li><strong>Transparency:</strong> Open validator operations, public monitoring</li>
+        <li><strong>Governance:</strong> Active voters on every proposal</li>
+        <li><strong>Community:</strong> Engaged, responsive, and helpful</li>
+      </ul>
+
+      <h3 id="governance" class="text-xl font-semibold mb-3">Governance Participation</h3>
+      <p class="text-gray-300">
+        We vote on every Elys network proposal. View our voting history and stance on current issues via <a href="https://www.elys.network" target="_blank" class="text-elys-purple">elys.network</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA Footer -->
+  <section class="px-6 py-12 bg-elys-dark border-t border-gray-800">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-2xl font-bold mb-4">Ready to Delegate?</h2>
+      <p class="text-gray-400 mb-6">
+        Join thousands of others securing the Elys Network with low commission and high reliability.
+      </p>
+      <a href="https://app.elys.network/earn/staking" target="_blank" class="btn-primary text-white px-8 py-3 rounded-lg font-semibold inline-block">
+        🚀 Go to Elys App
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-6 py-6 text-center text-gray-500 text-sm border-t border-gray-900">
+    <p>© 2025 Elys Keepers. Validator for the <a href="https://elys.network" target="_blank" class="text-elys-purple">Elys Network</a>.</p>
+    <p class="mt-1">Built with ❤️ for decentralization.</p>
+  </footer>
+
+  <!-- Script: Fully Preserved & Enhanced -->
   <script>
-    // DOM Ready
     document.addEventListener("DOMContentLoaded", () => {
       fetchTotalDelegation();
-      console.log("✅ Elys Keepers App: Loaded and ready.");
     });
 
-    // Fetch Total Staked Amount
     async function fetchTotalDelegation() {
       const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
-
       try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" }
-        });
-
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Network error");
         const data = await response.json();
         const tokens = parseFloat(data.validator.tokens);
         const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
-
         document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
       } catch (error) {
-        console.error("❌ Failed to fetch total delegation:", error);
         document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
       }
     }
 
-    // Check User Delegation
     async function checkDelegation() {
       const address = document.getElementById("walletAddress").value.trim();
       const resultDiv = document.getElementById("result");
       const button = document.getElementById("checkButton");
 
-      // Reset result view
       resultDiv.classList.remove("show");
-      resultDiv.innerHTML = "";
-
-      // Disable button
       button.disabled = true;
+      button.textContent = "Checking...";
 
-      // Validate wallet format
+      setTimeout(() => { button.textContent = "Check"; }, 1000); // prevent long load confusion
+
       if (!address) {
         showError("Please enter your wallet address.");
         return;
       }
-
       if (!address.startsWith("elys1")) {
-        showError("Wallet address must start with 'elys1'.");
+        showError("Address must start with 'elys1'.");
         return;
       }
-
       if (address.length < 39 || address.length > 48) {
-        showError("Invalid length. Elys address is 39–48 characters.");
+        showError("Invalid address length.");
         return;
       }
 
-      // Show loading
-      resultDiv.innerHTML = "🔍 Checking your delegation...";
-      resultDiv.style.color = "#b0b0c0";
+      resultDiv.innerHTML = "🔍 <span class='loading'>Querying Elys staking API...</span>";
       resultDiv.classList.add("show");
 
       const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
-
       try {
         const response = await fetch(url);
-
-        // Case: No delegations (404 or empty)
-        if (response.status === 404 || response.status === 400) {
+        if (response.status === 400 || response.status === 404) {
           showNotDelegating();
           return;
         }
-
-        if (!response.ok) {
-          throw new Error(`Network error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Error: ${response.status}`);
         const data = await response.json();
-        const delegations = data.delegation_responses || [];
-
-        const found = delegations.find(d => 
+        const found = (data.delegation_responses || []).find(d =>
           d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
         );
 
         if (found) {
-          const amount = parseFloat(found.balance.amount) / 1_000_000;
-          const formatted = amount.toLocaleString(undefined, { maximumFractionDigits: 2 });
-          resultDiv.innerHTML = `✅ You are delegating <strong>${formatted} $ELYS</strong> to <strong>Elys Keepers</strong>! Thank you for your trust and support. 🙌`;
-          resultDiv.style.color = "#00d48a";
+          const amount = (parseFloat(found.balance.amount) / 1e6).toLocaleString(undefined, { maximumFractionDigits: 2 });
+          resultDiv.innerHTML = `✅ You are delegating <strong>${amount} $ELYS</strong> to <strong>Elys Keepers</strong>! Thank you for your trust and support. 🙌`;
+          resultDiv.style.color = "#00D48A";
         } else {
           showNotDelegating();
         }
       } catch (error) {
-        console.error("🚨 Delegation check failed:", error);
-        resultDiv.innerHTML = `⚠️ Could not load data. Please check your connection and try again.`;
-        resultDiv.style.color = "#ff6b6b";
-        resultDiv.classList.add("show");
+        resultDiv.innerHTML = `⚠️ Could not load data. Please try again later.`;
+        resultDiv.style.color = "#FF6B6B";
       } finally {
-        button.disabled = false; // Re-enable
+        button.disabled = false;
       }
     }
 
-    // Helper: Show Error
     function showError(msg) {
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = `❌ ${msg}`;
-      resultDiv.style.color = "#ff6b6b";
+      resultDiv.style.color = "#FF6B6B";
       resultDiv.classList.add("show");
       document.getElementById("checkButton").disabled = false;
     }
 
-    // Helper: Show Not Delegating
     function showNotDelegating() {
       const resultDiv = document.getElementById("result");
       resultDiv.innerHTML = `
         ❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br>
         <a href="https://app.elys.network/earn/staking" target="_blank" style="color:#6C47FF; text-decoration:underline;">👉 Delegate now on Elys App</a>
       `;
-      resultDiv.style.color = "#ff6b6b";
+      resultDiv.style.color = "#FF6B6B";
       resultDiv.classList.add("show");
       document.getElementById("checkButton").disabled = false;
     }
