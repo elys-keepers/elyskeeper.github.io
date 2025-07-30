@@ -249,22 +249,23 @@
     }
 
     // Fetch total delegation to the validator
-    async function fetchTotalDelegation() {
-      const url = "const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
-";
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const tokens = parseFloat(data.validator.tokens);
-        const eusd = (tokens / 1e6).toLocaleString(undefined, {
-          maximumFractionDigits: 0,
-        });
-        document.getElementById("totalDelegations").textContent = `Total Staked: ${eusd} $ELYS`;
-      } catch (error) {
-        console.error("Failed to load total delegation:", error);
-        document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
-      }
-    }
+async function fetchTotalDelegation() {
+  const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+
+    const tokens = parseFloat(data.validator.tokens);
+    const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+    document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
+  } catch (error) {
+    console.error("Failed to load total delegation:", error);
+    document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
+  }
+}
+
 
     // Check if user delegates to validator
     async function checkDelegation() {
