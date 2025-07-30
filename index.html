@@ -3,316 +3,221 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="Elys Keepers – Your trusted voice in Elys Network governance. Delegate $ELYS and help shape the future." />
-  <title>Elys Keepers | Delegate & Govern</title>
+  <title>Elys Keepers - Delegation Checker</title>
   <style>
-    :root {
-      --primary: #6C47FF;
-      --bg: #0F0F12;
-      --card: #1A1A1F;
-      --text: #E0E0E0;
-      --text-secondary: #A0A0B0;
-      --border: #333340;
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 0;
-      margin: 0;
+      background: #0f0f13;
+      color: #ffffff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
-      transition: background 0.3s ease;
+      align-items: center;
+      padding: 30px 20px;
     }
 
-    header {
-      padding: 1.5rem;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-      background: rgba(15, 15, 18, 0.9);
-      position: relative;
-    }
-
-    header h1 {
-      font-size: 1.8rem;
-      color: var(--text);
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
-    }
-
-    header p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-
-    .validator-info {
-      margin: 2rem auto;
-      max-width: 800px;
-      padding: 1.5rem;
-      background: var(--card);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .validator-info code {
-      display: block;
-      font-family: monospace;
-      background: #121216;
-      color: #00d48a;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin: 1rem 0;
-      overflow-x: auto;
-      word-break: break-all;
-      border: 1px solid #2c2c34;
-    }
-
-    .copy-btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-      transition: background 0.2s ease;
-    }
-
-    .copy-btn:hover {
-      background: #5a38e0;
-    }
-
-    .status {
-      padding: 2rem;
-      text-align: center;
-      flex: 1;
-    }
-
-    .status h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--text);
-    }
-
-    .status p {
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-    }
-
-    .delegation-tool {
-      max-width: 500px;
-      margin: 0 auto 2rem;
-      background: var(--card);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .delegation-tool label {
-      display: block;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-    }
-
-    .delegation-tool input {
+    .container {
+      background: #1a1a24;
+      border-radius: 16px;
       width: 100%;
-      padding: 0.75rem;
-      background: #121216;
-      border: 1px solid var(--border);
+      max-width: 500px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #6C47FF;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1rem;
+      color: #b0b0c0;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      flex-grow: 1;
+      padding: 14px;
+      border: 1px solid #3a3a48;
+      background: #252530;
       border-radius: 8px;
-      color: var(--text);
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #6C47FF;
+      box-shadow: 0 0 0 2px rgba(108, 71, 255, 0.25);
     }
 
     .check-btn {
-      width: 100%;
-      background: var(--primary);
+      background: #6C47FF;
       color: white;
       border: none;
-      padding: 0.8rem;
+      padding: 0 20px;
       border-radius: 8px;
-      font-size: 0.95rem;
       cursor: pointer;
-      transition: background 0.2s;
+      font-weight: 600;
+      transition: all 0.2s;
     }
 
     .check-btn:hover {
-      background: #5a38e0;
+      background: #5a3bd9;
     }
 
-    .result {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #121216;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      color: var(--text-secondary);
-      display: none;
+    #result {
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0;
+      height: auto;
+      transition: opacity 0.3s ease;
     }
 
-    .result.show {
-      display: block;
+    #result.show {
+      opacity: 1;
     }
 
-    .total-delegations {
-      font-size: 1.1rem;
-      color: #00d48a;
-      font-weight: 500;
-      margin-top: 1rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      margin-top: auto;
-      border-top: 1px solid var(--border);
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .social-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .social-link:hover {
+    a {
+      color: #6C47FF;
       text-decoration: underline;
     }
 
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 1.5rem;
-      }
-      .validator-info, .delegation-tool {
-        padding: 1.2rem;
-      }
+    #totalDelegations {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-top: 20px;
+      color: #00d48a;
+      font-weight: 600;
+    }
+
+    .loading {
+      color: #b0b0c0;
+      font-style: italic;
     }
   </style>
 </head>
 <body>
-  <header>
+
+  <div class="container">
     <h1>Elys Keepers</h1>
-    <p>Your voice in Elys Network governance</p>
-  </header>
+    <p class="subtitle">Verify your delegation</p>
 
-  <section class="validator-info">
-    <p><strong>Validator Address:</strong></p>
-    <code id="validatorAddress">elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0</code>
-    <button class="copy-btn" onclick="copyAddress()">Copy Address</button>
-  </section>
-
-  <main class="status">
-    <h2>Delegate $ELYS with Confidence</h2>
-    <p>Elys Keepers is committed to secure, transparent, and active participation in Elys Network governance. Use the tool below to check if you're already delegating.</p>
-
-    <div class="delegation-tool">
-      <label for="walletAddress">Enter Your $ELYS Wallet Address</label>
-      <input type="text" id="walletAddress" placeholder="elys1..." />
-      <button class="check-btn" onclick="checkDelegation()">Check My Delegations</button>
-      <div class="result" id="result"></div>
-      <div class="total-delegations" id="totalDelegations"></div>
+    <div class="input-group">
+      <input type="text" id="walletAddress" placeholder="Enter your Elys wallet address" />
+      <button class="check-btn" onclick="checkDelegation()">Check</button>
     </div>
-  </main>
 
-  <footer>
-    <p>Powered with 💜 by <a href="https://x.com/ElysKeepers" target="_blank" class="social-link">@ElysKeepers</a> on X |
-    <a href="https://elys.network" target="_blank" class="social-link">Elys.network</a></p>
-    <p><small>No wallet connection required. All data from public Elys API.</small></p>
-  </footer>
+    <div id="result"></div>
+    <div id="totalDelegations">Loading total staked...</div>
+  </div>
 
   <script>
-    // Copy validator address to clipboard
-    function copyAddress() {
-      const address = document.getElementById("validatorAddress").textContent;
-      navigator.clipboard.writeText(address).then(() => {
-        alert("Validator address copied!");
-      }).catch(err => {
-        console.error("Copy failed: ", err);
-        alert("Failed to copy. Please copy manually.");
-      });
+    // Fetch total delegation on page load
+    window.onload = function () {
+      fetchTotalDelegation();
+    };
+
+    // Get validator info - now using official API
+    async function fetchTotalDelegation() {
+      const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+
+        const tokens = parseFloat(data.validator.tokens);
+        const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+        document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
+      } catch (error) {
+        console.error("Failed to load total delegation:", error);
+        document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
+      }
     }
 
-    // Fetch total delegation to the validator
-async function fetchTotalDelegation() {
-  const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-
-    const tokens = parseFloat(data.validator.tokens);
-    const amount = (tokens / 1e6).toLocaleString(undefined, { maximumFractionDigits: 0 });
-
-    document.getElementById("totalDelegations").textContent = `Total Staked: ${amount} $ELYS`;
-  } catch (error) {
-    console.error("Failed to load total delegation:", error);
-    document.getElementById("totalDelegations").textContent = "Total Staked: Data Unavailable";
-  }
-}
-
-
-    // Check if user delegates to validator
+    // Check user delegation
     async function checkDelegation() {
       const address = document.getElementById("walletAddress").value.trim();
       const resultDiv = document.getElementById("result");
+      const checkBtn = document.querySelector(".check-btn");
+
+      // Reset result
+      resultDiv.classList.remove("show");
+      resultDiv.innerHTML = "";
+      checkBtn.disabled = true;
 
       if (!address.startsWith("elys1") || address.length < 30) {
         resultDiv.textContent = "Please enter a valid Elys wallet address.";
         resultDiv.style.color = "#ff6b6b";
         resultDiv.classList.add("show");
+        checkBtn.disabled = false;
         return;
       }
 
       resultDiv.textContent = "Checking...";
-      resultDiv.style.color = "#00d48a";
+      resultDiv.style.color = "#b0b0c0";
       resultDiv.classList.add("show");
 
-      const url = const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
-      
+      const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
+
       try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error("API error");
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to any validator.<br><br><a href="https://app.elys.network/earn/staking" target="_blank">Delegate now on Elys App</a>`;
+            resultDiv.style.color = "#ff6b6b";
+            resultDiv.classList.add("show");
+            checkBtn.disabled = false;
+            return;
+          } else {
+            throw new Error("Network Error");
+          }
+        }
 
         const data = await response.json();
         const delegations = data.delegation_responses || [];
 
-        const found = delegations.find(d => 
-          d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
+        const found = delegations.find(
+          d => d.delegation.validator_address === "elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0"
         );
 
         if (found) {
           const amount = parseFloat(found.balance.amount) / 1e6;
-          resultDiv.innerHTML = `✅ You are delegating <strong>${amount.toLocaleString()} $ELYS</strong> to Elys Keepers! Thank you for your trust.`;
+          resultDiv.innerHTML = `✅ You are delegating <strong>${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} $ELYS</strong> to Elys Keepers! Thank you for your trust.`;
+          resultDiv.style.color = "#00d48a";
         } else {
-          resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br>
-          <a href="https://app.elys.network/earn/staking" target="_blank" style="color:#6C47FF; text-decoration:underline;">Delegate now on Elys App</a>`;
+          resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to Elys Keepers.<br><br><a href="https://app.elys.network/earn/staking" target="_blank">Delegate now on Elys App</a>`;
+          resultDiv.style.color = "#ff6b6b";
         }
+        resultDiv.classList.add("show");
       } catch (error) {
-        resultDiv.textContent = "Could not fetch delegation data. Please try again later.";
+        console.error("Check delegation error:", error);
+        resultDiv.textContent = "Could not fetch data. Please try again later.";
         resultDiv.style.color = "#ff6b6b";
+        resultDiv.classList.add("show");
       }
-    }
 
-    // Load total delegation on page load
-    window.onload = () => {
-      fetchTotalDelegation();
-    };
+      checkBtn.disabled = false;
+    }
   </script>
+
 </body>
 </html>
