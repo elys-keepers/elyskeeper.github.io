@@ -100,7 +100,9 @@
         type="text" 
         id="walletAddress" 
         placeholder="Enter your elys1... wallet address" 
-        autocomplete="off"
+        autocomplete="off" 
+        autocorrect="off" 
+        spellcheck="false"
       />
       <button class="check-btn" onclick="checkDelegation()">Check</button>
     </div>
@@ -116,9 +118,11 @@
 
     // --- FUNCTION: Fetch Total Staked ---
     async function fetchTotalDelegation() {
+      const proxyUrl = "https://corsproxy.io/?";
       const url = "https://api.elys.network/cosmos/staking/v1beta1/validators/elysvaloper197uts40mlzwvcsz7smhhnl2khwdgt67tn70zt0";
+
       try {
-        const response = await fetch(url);
+        const response = await fetch(proxyUrl + url);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
 
@@ -138,7 +142,6 @@
       const resultDiv = document.getElementById("result");
       const button = document.querySelector(".check-btn");
 
-      // Reset result
       resultDiv.classList.remove("show");
       resultDiv.innerHTML = "";
 
@@ -157,23 +160,22 @@
         return;
       }
 
-      // Set loading state
       resultDiv.innerHTML = "🔍 Checking your delegation...";
       resultDiv.style.color = "#94a3b8";
       resultDiv.classList.add("show");
       button.disabled = true;
 
+      const proxyUrl = "https://corsproxy.io/?";
       const url = `https://api.elys.network/cosmos/staking/v1beta1/delegations/${address}`;
 
       try {
-        const response = await fetch(url);
+        console.log("Checking:", address);
+        const response = await fetch(proxyUrl + url);
 
-        // If 404, user has no delegations
         if (response.status === 404) {
           resultDiv.innerHTML = `❌ You are <strong>not</strong> currently delegating to any validator.<br><br>
             <a href="https://app.elys.network/earn/staking" target="_blank" style="color:#6C47FF; text-decoration:underline;">👉 Delegate to Elys Keepers</a>`;
           resultDiv.style.color = "#ff6b6b";
-          button.disabled = false;
           return;
         }
 
@@ -182,6 +184,8 @@
         }
 
         const data = await response.json();
+        console.log(data);
+
         const delegations = data.delegation_responses || [];
 
         const found = delegations.find(
@@ -206,7 +210,7 @@
         `;
         resultDiv.style.color = "#ff6b6b";
       } finally {
-        button.disabled = false;  // Re-enable button
+        button.disabled = false;
       }
     }
   </script>
